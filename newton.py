@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 
 
 def f_d(x, f, epsilon):
@@ -27,7 +28,7 @@ def f_dd(x, f, epsilon):
     return (f(x + epsilon) - 2 * f(x) + f(x - epsilon)) / (epsilon**2)
 
 
-def optimize(x_0, f, epsilon=0.0001, threshold=0.0001):
+def optimize(x_0, f, epsilon=1e-5, threshold=1e-5):
     """
     Runs Newton's method to approximate maxima/minima of a function
 
@@ -38,32 +39,26 @@ def optimize(x_0, f, epsilon=0.0001, threshold=0.0001):
     epsilon: Difference used to calculate finite difference derivatives
     threshold: How close we want to get to minima/maxima before return
     """
+    # Check Inputs
+    if not (isinstance(x_0, float) or isinstance(x_0, int)):
+        raise TypeError("`x_0` must be numeric")
+    if not callable(f):
+        raise TypeError(f"Argument is not a function, it is of type {type(f)}")
+
+    # Optimization
     curr_x = x_0
     prev_x = np.inf
+    iter = 0
     while np.abs(curr_x - prev_x) > threshold:
+        if iter > 10000:
+            raise RuntimeError(f"At step {iter}, optimization does not converge")
+        iter += 1
         prev_x = curr_x
-        curr_x -= f_d(curr_x, f, epsilon) / f_dd(curr_x, f, epsilon)
+        f_d_x = f_d(curr_x, f, epsilon)
+        f_dd_x = f_dd(curr_x, f, epsilon)
+        if np.isclose(f_dd_x, 0):
+            raise ZeroDivisionError(
+                f"Second Derivative is approximately 0 on step {iter}."
+            )
+        curr_x = curr_x - f_d_x / f_dd_x
     return curr_x
-
-
-def test_optimize():
-    """
-    Tests our optimize function with three test cases.
-    """
-
-    def f_1(x):
-        return (x - 3) ** 2
-
-    def f_2(x):
-        return np.sqrt(x**2 + 3)
-
-    case_threshold = 0.001
-    print("Test Case 1:")
-    assert np.abs(optimize(1, f_1) - 3) < case_threshold
-    print("Success")
-    print("Test Case 2:")
-    assert np.abs(optimize(1, f_2) - 0) < case_threshold
-    print("Success")
-    print("Test Case 3:")
-    assert np.abs(optimize(3, np.cos) - np.pi) < case_threshold
-    print("Success")

@@ -19,8 +19,6 @@ def test_optimize():
         return (x-3)**2
     def f_2(x):
         return np.sqrt(x**2 + 3)
-    def f_3(x):
-        return np.sin(x)
 
     case_threshold = 0.001
     print(f"Test Case 1:")
@@ -30,5 +28,5 @@ def test_optimize():
     assert np.abs(optimize(1, f_2) - 0) < case_threshold
     print(f"Success")
     print(f"Test Case 3:")
-    assert np.abs(optimize(3, f_3) - np.pi) < case_threshold
+    assert np.abs(optimize(3, np.cos) - np.pi) < case_threshold
     print(f"Success")

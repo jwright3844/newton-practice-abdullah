@@ -12,7 +12,7 @@ def gradient(x, f):
     f: Multivariate function (callable)
     """
     grad_fun_f = nd.Gradient(f)
-    return np.linalg.matrix_transpose(grad_fun_f(x))
+    return grad_fun_f(x).reshape(-1, 1)
 
 
 def hessian(x, f):
@@ -25,7 +25,7 @@ def hessian(x, f):
     f: Multivariate function (callable)
     """
     Hfun_f = nd.Hessian(f)
-    return Hfun_f(x)
+    return Hfun_f(x.reshape(-1))
 
 
 def optimize(x_0, f, threshold=1e-5):
@@ -54,22 +54,15 @@ def optimize(x_0, f, threshold=1e-5):
             raise RuntimeError(f"At step {iter}, optimization does not converge")
         iter += 1
         prev_x = curr_x
-        print("curr_x")
-        print(curr_x)
         grad_f_x = gradient(curr_x, f)
-        print("grad_f_x")
-        print(grad_f_x)
         hessian_f_x = hessian(curr_x, f)
-        print("hessian_f_x")
-        print(hessian_f_x)
         # if np.isclose(f_dd_x, 0):
         #     raise ZeroDivisionError(
         #         f"Second Derivative is approximately 0 on step {iter}."
         #     )
-        curr_x = curr_x - np.linalg.inv(hessian_f_x)*grad_f_x
+        curr_x = curr_x - (np.matmul(np.linalg.inv(hessian_f_x),grad_f_x))
     return curr_x
 
 def f_1(x):
     return np.sum(x**2)
-print(f_1(np.array([[1],[1],[1]])))
 print(optimize(np.array([[1],[1],[1]]), f_1))

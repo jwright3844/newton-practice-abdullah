@@ -65,8 +65,4 @@ def optimize(x_0, f, threshold=1e-5):
     return curr_x
 
 
-def f_1(x):
-    return np.sum(x**2)
-
-
-print(optimize(np.array([[1], [1], [1]]), f_1))
+print(optimize(np.array([[1], [1], [1]]), lambda x: np.sum(x**2)))

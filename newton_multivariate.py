@@ -2,6 +2,7 @@ import numdifftools as nd
 import numpy as np
 import warnings
 
+
 def gradient(x, f):
     """
     First Derivative Finite Difference Function
@@ -47,7 +48,7 @@ def optimize(x_0, f, threshold=1e-5):
 
     # Optimization
     curr_x = x_0
-    prev_x = np.inf*np.ones_like(x_0)
+    prev_x = np.inf * np.ones_like(x_0)
     iter = 0
     while np.linalg.norm(curr_x - prev_x) > threshold:
         if iter > 10000:
@@ -60,9 +61,12 @@ def optimize(x_0, f, threshold=1e-5):
         #     raise ZeroDivisionError(
         #         f"Second Derivative is approximately 0 on step {iter}."
         #     )
-        curr_x = curr_x - (np.matmul(np.linalg.inv(hessian_f_x),grad_f_x))
+        curr_x = curr_x - (np.matmul(np.linalg.inv(hessian_f_x), grad_f_x))
     return curr_x
+
 
 def f_1(x):
     return np.sum(x**2)
-print(optimize(np.array([[1],[1],[1]]), f_1))
+
+
+print(optimize(np.array([[1], [1], [1]]), f_1))
